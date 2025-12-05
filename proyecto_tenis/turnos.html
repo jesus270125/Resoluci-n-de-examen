@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitar Turno</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        select, input { display: block; margin: 10px 0; padding: 5px; width: 300px; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #ffc107; border: none; }
+    </style>
+</head>
+<body>
+    <h2>Reservar Cancha de Tenis</h2>
+    <p>Recuerda: Debes reservar con 2 días de anticipación.</p>
+    
+    <label>Cancha:</label>
+    <select id="cancha">
+        <option value="Cancha 1 - Arcilla">Cancha 1 - Arcilla</option>
+        <option value="Cancha 2 - Cemento">Cancha 2 - Cemento</option>
+        <option value="Cancha 3 - Pasto">Cancha 3 - Pasto</option>
+    </select>
+
+    <label>Fecha:</label>
+    <input type="date" id="fecha">
+
+    <label>Hora:</label>
+    <input type="time" id="hora">
+
+    <button onclick="solicitarTurno()">Confirmar Reserva</button>
+    <p id="mensaje" style="font-weight: bold; margin-top: 10px;"></p>
+
+    <button onclick="cerrarSesion()" style="background-color: #6c757d; color: white; margin-top: 30px;">Cerrar Sesión</button>
+
+    <script>
+        // Verificamos si hay alguien logueado
+        const usuarioId = localStorage.getItem('usuarioId');
+        if (!usuarioId) {
+            window.location.href = 'login.html';
+        }
+
+        async function solicitarTurno() {
+            const datos = {
+                cancha: document.getElementById('cancha').value,
+                fecha: document.getElementById('fecha').value,
+                hora: document.getElementById('hora').value,
+                usuarioId: usuarioId
+            };
+
+            try {
+                const respuesta = await fetch('http://localhost:3000/solicitar-turno', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await respuesta.json();
+
+                const mensajeDiv = document.getElementById('mensaje');
+                if (respuesta.ok) {
+                    mensajeDiv.style.color = "green";
+                    mensajeDiv.innerText = "¡Éxito! " + resultado.message;
+                } else {
+                    mensajeDiv.style.color = "red";
+                    // Aquí sale el error si la fecha es muy próxima o la cancha está ocupada
+                    mensajeDiv.innerText = "Error: " + resultado.message;
+                }
+            } catch (error) {
+                alert("Error de conexión");
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuarioId');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

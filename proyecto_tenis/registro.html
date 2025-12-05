@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Club de Tenis</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input { display: block; margin: 10px 0; padding: 5px; width: 100%; max-width: 300px; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #28a745; color: white; border: none; }
+        .info { background-color: #e2e3e5; padding: 10px; margin-bottom: 10px; border-radius: 5px; max-width: 300px;}
+    </style>
+</head>
+<body>
+    <h2>Registro de Nuevo Usuario</h2>
+    
+    <div class="info">
+        <strong>Nota:</strong> La contraseña será generada automáticamente y enviada a su correo.
+    </div>
+
+    <form id="formRegistro">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="apellido" placeholder="Apellido" required>
+        <input type="number" id="edad" placeholder="Edad" required>
+        <input type="text" id="direccion" placeholder="Dirección">
+        <input type="email" id="correo" placeholder="Correo Electrónico" required>
+        <input type="text" id="celular" placeholder="Celular">
+        <input type="text" id="domicilio" placeholder="Domicilio">
+        <button type="submit">Registrarse</button>
+    </form>
+    
+    <p id="mensaje" style="color: blue; font-weight: bold;"></p>
+    <a href="login.html">¿Ya tienes cuenta? Inicia sesión aquí</a>
+
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                edad: document.getElementById('edad').value,
+                direccion: document.getElementById('direccion').value,
+                correo: document.getElementById('correo').value,
+                celular: document.getElementById('celular').value,
+                domicilio: document.getElementById('domicilio').value
+                // NO enviamos contraseña
+            };
+
+            try {
+                const respuesta = await fetch('http://localhost:3000/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await respuesta.json();
+
+                if (respuesta.ok) {
+                    alert("¡Registro Exitoso! Revisa tu correo (o la consola del servidor) para ver tu contraseña.");
+                    window.location.href = 'login.html';
+                } else {
+                    alert("Error: " + resultado.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error de conexión con el servidor");
+            }
+        });
+    </script>
+</body>
+</html>

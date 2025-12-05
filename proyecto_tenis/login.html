@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Club de Tenis</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input { display: block; margin: 10px 0; padding: 5px; width: 300px; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Iniciar Sesión</h2>
+    <input type="email" id="correo" placeholder="Ingresa tu correo" required>
+    <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
+    <button onclick="iniciarSesion()">Ingresar</button>
+    
+    <p id="mensaje" class="error"></p>
+    <br>
+    <a href="registro.html">¿No tienes cuenta? Regístrate aquí</a>
+
+    <script>
+        async function iniciarSesion() {
+            const correo = document.getElementById('correo').value;
+            const contrasena = document.getElementById('contrasena').value;
+
+            try {
+                const respuesta = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                const resultado = await respuesta.json();
+
+                if (respuesta.ok) {
+                    // Guardamos el ID del usuario en la memoria del navegador para usarlo al pedir turno
+                    localStorage.setItem('usuarioId', resultado.usuarioId);
+                    alert("Bienvenido");
+                    window.location.href = 'turnos.html'; // Nos manda a la página de turnos
+                } else {
+                    // Muestra errores como "Credenciales incorrectas" o "Su cuenta está bloqueada"
+                    document.getElementById('mensaje').innerText = resultado.message;
+                }
+            } catch (error) {
+                alert("Error al conectar con el servidor");
+            }
+        }
+    </script>
+</body>
+</html>
