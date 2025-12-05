@@ -2,49 +2,160 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Club de Tenis</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        input { display: block; margin: 10px 0; padding: 5px; width: 100%; max-width: 300px; }
-        button { padding: 10px 20px; cursor: pointer; background-color: #28a745; color: white; border: none; }
-        .info { background-color: #e2e3e5; padding: 10px; margin-bottom: 10px; border-radius: 5px; max-width: 300px;}
+        :root {
+            --primary-color: #28a745;
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 { text-align: center; margin-top: 0; }
+
+        .form-group { margin-bottom: 15px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
+            font-size: 0.9em;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            cursor: pointer; 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover { background-color: #218838; }
+        button:disabled { background-color: #94d3a2; cursor: not-allowed; }
+
+        .info { 
+            background-color: #e2e3e5; 
+            color: #383d41;
+            padding: 12px; 
+            margin-bottom: 20px; 
+            border-radius: 5px; 
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .links { text-align: center; margin-top: 15px; }
+        .links a { color: var(--primary-color); text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h2>Registro de Nuevo Usuario</h2>
-    
-    <div class="info">
-        <strong>Nota:</strong> La contraseña será generada automáticamente y enviada a su correo.
-    </div>
 
-    <form id="formRegistro">
-        <input type="text" id="nombre" placeholder="Nombre" required>
-        <input type="text" id="apellido" placeholder="Apellido" required>
-        <input type="number" id="edad" placeholder="Edad" required>
-        <input type="text" id="direccion" placeholder="Dirección">
-        <input type="email" id="correo" placeholder="Correo Electrónico" required>
-        <input type="text" id="celular" placeholder="Celular">
-        <input type="text" id="domicilio" placeholder="Domicilio">
-        <button type="submit">Registrarse</button>
-    </form>
-    
-    <p id="mensaje" style="color: blue; font-weight: bold;"></p>
-    <a href="login.html">¿Ya tienes cuenta? Inicia sesión aquí</a>
+    <main class="container">
+        <h2>Registro de Nuevo Usuario</h2>
+        
+        <div class="info">
+            <strong>Nota:</strong> La contraseña será generada automáticamente y enviada a su correo.
+        </div>
+
+        <form id="formRegistro">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan" required autocomplete="given-name">
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" name="apellido" placeholder="Ej. Pérez" required autocomplete="family-name">
+            </div>
+
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" name="edad" placeholder="Ej. 25" required min="1" max="120">
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="juan@ejemplo.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="celular">Celular</label>
+                <input type="tel" id="celular" name="celular" placeholder="Número de contacto" autocomplete="tel">
+            </div>
+
+            <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" placeholder="Calle principal..." autocomplete="street-address">
+            </div>
+
+            <div class="form-group">
+                <label for="domicilio">Domicilio (Adicional)</label>
+                <input type="text" id="domicilio" name="domicilio" placeholder="Detalles extra...">
+            </div>
+
+            <button type="submit" id="btnSubmit">Registrarse</button>
+        </form>
+        
+        <div class="links">
+            <a href="login.html">¿Ya tienes cuenta? Inicia sesión aquí</a>
+        </div>
+    </main>
 
     <script>
-        document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+        const form = document.getElementById('formRegistro');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const datos = {
-                nombre: document.getElementById('nombre').value,
-                apellido: document.getElementById('apellido').value,
-                edad: document.getElementById('edad').value,
-                direccion: document.getElementById('direccion').value,
-                correo: document.getElementById('correo').value,
-                celular: document.getElementById('celular').value,
-                domicilio: document.getElementById('domicilio').value
-                // NO enviamos contraseña
-            };
+            // UX: Deshabilitar botón para evitar doble envío
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Procesando...';
+
+            // OPTIMIZACIÓN: Usamos FormData para capturar todos los campos automáticamente
+            // Esto crea un objeto con los 'name' de los inputs: { nombre: "...", apellido: "...", ... }
+            const formData = new FormData(form);
+            const datos = Object.fromEntries(formData.entries());
 
             try {
                 const respuesta = await fetch('http://localhost:3000/registro', {
@@ -59,11 +170,15 @@
                     alert("¡Registro Exitoso! Revisa tu correo (o la consola del servidor) para ver tu contraseña.");
                     window.location.href = 'login.html';
                 } else {
-                    alert("Error: " + resultado.message);
+                    alert("Error: " + (resultado.message || "Ocurrió un error inesperado"));
                 }
             } catch (error) {
                 console.error(error);
                 alert("Error de conexión con el servidor");
+            } finally {
+                // Restaurar botón en caso de error (si fuera exitoso, redirecciona antes)
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = 'Registrarse';
             }
         });
     </script>

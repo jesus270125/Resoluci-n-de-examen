@@ -2,51 +2,172 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Club de Tenis</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        input { display: block; margin: 10px 0; padding: 5px; width: 300px; }
-        button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; }
-        .error { color: red; font-weight: bold; }
+        /* Mismas variables y estilos base que el registro para consistencia visual */
+        :root {
+            --primary-color: #28a745; /* Verde del club */
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --error-color: #dc3545;
+            --error-bg: #f8d7da;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 { text-align: center; margin-top: 0; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 15px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
+            font-size: 0.9em;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            cursor: pointer; 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: #218838; }
+        button:disabled { background-color: #94d3a2; cursor: not-allowed; }
+
+        /* Estilo mejorado para el mensaje de error */
+        .error-msg {
+            color: #721c24;
+            background-color: var(--error-bg);
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            display: none; /* Oculto por defecto */
+        }
+
+        .links { text-align: center; margin-top: 20px; }
+        .links a { color: var(--primary-color); text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h2>Iniciar Sesión</h2>
-    <input type="email" id="correo" placeholder="Ingresa tu correo" required>
-    <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
-    <button onclick="iniciarSesion()">Ingresar</button>
-    
-    <p id="mensaje" class="error"></p>
-    <br>
-    <a href="registro.html">¿No tienes cuenta? Regístrate aquí</a>
+
+    <main class="container">
+        <h2>Iniciar Sesión</h2>
+        
+        <form id="formLogin">
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" id="btnSubmit">Ingresar</button>
+        </form>
+
+        <div id="mensaje" class="error-msg"></div>
+
+        <div class="links">
+            <a href="registro.html">¿No tienes cuenta? Regístrate aquí</a>
+        </div>
+    </main>
 
     <script>
-        async function iniciarSesion() {
-            const correo = document.getElementById('correo').value;
-            const contrasena = document.getElementById('contrasena').value;
+        const form = document.getElementById('formLogin');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const mensajeDiv = document.getElementById('mensaje');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Resetear estado visual
+            mensajeDiv.style.display = 'none';
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Verificando...';
+
+            // Capturar datos automáticamente del formulario
+            const formData = new FormData(form);
+            const datos = Object.fromEntries(formData.entries());
 
             try {
                 const respuesta = await fetch('http://localhost:3000/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ correo, contrasena })
+                    body: JSON.stringify(datos)
                 });
 
                 const resultado = await respuesta.json();
 
                 if (respuesta.ok) {
-                    // Guardamos el ID del usuario en la memoria del navegador para usarlo al pedir turno
+                    // Lógica original intacta
                     localStorage.setItem('usuarioId', resultado.usuarioId);
+                    // Pequeño timeout visual opcional o redirección inmediata
                     alert("Bienvenido");
-                    window.location.href = 'turnos.html'; // Nos manda a la página de turnos
+                    window.location.href = 'turnos.html'; 
                 } else {
-                    // Muestra errores como "Credenciales incorrectas" o "Su cuenta está bloqueada"
-                    document.getElementById('mensaje').innerText = resultado.message;
+                    // Mostrar error en la caja roja
+                    mensajeDiv.innerText = resultado.message || "Error de credenciales";
+                    mensajeDiv.style.display = 'block';
                 }
             } catch (error) {
-                alert("Error al conectar con el servidor");
+                console.error(error);
+                mensajeDiv.innerText = "Error al conectar con el servidor";
+                mensajeDiv.style.display = 'block';
+            } finally {
+                // Restaurar botón
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = 'Ingresar';
             }
-        }
+        });
     </script>
 </body>
 </html>
